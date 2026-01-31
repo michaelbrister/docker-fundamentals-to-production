@@ -162,6 +162,8 @@ docker compose ps
 - `adminer` starts after db is healthy
 - `docker compose ps` shows both services
 
+Do not proceed until the `db` service reports **healthy**.
+
 If port `5432` or `8081` is already in use, change the host side of the mapping (left side).
 
 ---
@@ -298,6 +300,8 @@ Login:
 
 Bring the stack down:
 
+Using `docker stop` or leaving containers running is considered a failed cleanup.
+
 **bash / zsh**
 
 ```bash
@@ -350,6 +354,7 @@ To pass Lab 07:
 - You confirmed table creation and inserted data
 - You restarted containers and proved data persisted via the volume
 - You tore down with `docker compose down`
+- No `lab-07` containers are left running or stopped
 
 ### Official validation (recommended)
 
@@ -365,6 +370,6 @@ From repo root:
 ## Quick quiz (answer from memory)
 
 1. Why do databases require volumes in Docker?
-2. What does `docker compose down` remove vs keep?
+2. What does `docker compose down` remove, and what does it intentionally keep?
 3. Why does the init script run only once?
 4. Why are service names better than container IPs?
