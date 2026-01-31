@@ -1,1 +1,3 @@
-# lab-11 instructor notes
+# Lab 10 Instructor Notes
+
+Focus on environment shape, not code.

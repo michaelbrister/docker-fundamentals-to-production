@@ -1,0 +1,1 @@
+Write-Host 'Lab 10 validation placeholder'
