@@ -1,1 +1,3 @@
-# lab-10 hints
+# Lab 10 Hints
+
+Remember: overrides apply automatically only when present.
