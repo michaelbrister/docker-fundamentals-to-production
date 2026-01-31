@@ -173,6 +173,11 @@ docker ps
 
 ✅ Expected:
 
+- `docker ps` shows `lab01-nginx` with STATUS `Up`
+- The PORTS column shows `0.0.0.0:8080->80/tcp` (or your chosen host port)
+
+✅ Expected:
+
 - `docker ps` shows `lab01-nginx` as running
 - Visiting `http://localhost:8080` shows the Nginx welcome page
 
@@ -200,7 +205,7 @@ docker logs lab01-nginx --tail 50
 
 ✅ Expected:
 
-- You see access logs after you refresh the page a few times
+- After refreshing the browser a few times, `docker logs` shows HTTP requests such as `GET /`
 
 #### Inspect
 
@@ -275,6 +280,8 @@ docker rm lab01-nginx
 docker ps
 ```
 
+If cleanup was successful, `docker ps -a` should NOT list `lab01-nginx`.
+
 ✅ Expected:
 
 - `lab01-nginx` does not appear in `docker ps`
@@ -312,10 +319,29 @@ To pass Lab 01:
   - nginx mapped to a host port
 - You cleaned up: no `lab01-nginx` container is left running
 
-If your repo includes lab validators:
+### Official validation (recommended)
 
-- bash: `./scripts/validate/validate.sh lab-01`
-- PowerShell: `./scripts/validate/validate.ps1 lab-01`
+Use the top-level validation runners from the repo root:
+
+- **bash / zsh**
+
+  ```bash
+  ./scripts/validate/validate.sh lab-01
+  ```
+
+- **PowerShell**
+  ```powershell
+  .\scripts\validate\validate.ps1 lab-01
+  ```
+
+These commands dispatch to the lab-specific validators and enforce strict cleanup rules.
+
+### Direct lab validators (advanced / optional)
+
+You may also run the lab validators directly:
+
+- `./labs/lab-01/validate.sh`
+- `.\labs\lab-01\validate.ps1`
 
 ---
 
