@@ -1,147 +1,100 @@
-# Lab 10 — Dev vs Prod: Compose Overrides and Env Files
+# Lab 11 — Debugging & Break/Fix: Operating a Containerized System
 
 ## Goal
-By the end of this lab you will be able to:
-- Run the **same system** in dev and prod-like modes
-- Understand how **Compose layering** works (`compose.yaml` + `compose.override.yaml`)
-- Use **env files** to inject configuration
-- Know when bind mounts are appropriate (dev) and when they are not (prod-like)
-- Switch environments **without editing code**
 
-> **Strict mode:** Cleanup must be done with `docker compose down`.
+This lab teaches you to debug **systems**, not individual containers.
+
+By the end of this lab you will be able to:
+
+- Diagnose failures using evidence (`ps`, `logs`, health, readiness)
+- Classify failures: config vs networking vs state vs environment shape
+- Fix issues methodically (no random commands)
+- Write a short runbook documenting symptoms → root cause → fix → prevention
+
+> **Strict mode:** You must clean up with `docker compose down`.  
+> You must produce `RUNBOOK.md` in this lab folder.
 
 ---
 
 ## Prerequisites
-- Labs 01–09 completed
-- You can build and run the Lab 09 system
-- Basic familiarity with env vars
+
+- Labs 01–10 completed (especially 08–10)
+- Docker installed and running
+- Comfort with `docker compose ps` and `docker compose logs`
 
 ---
 
-## Concepts (5–10 minutes)
+## Rules of engagement (enforced in spirit)
 
-### Compose layering
-Compose automatically applies `compose.override.yaml` when present.
-- Base file = shared truth
-- Override = environment-specific behavior (dev)
-
-### Environments are overlays
-You do **not** fork compose files per environment.
-You layer configuration on top of a stable base.
-
-### Env files
-Configuration lives outside compose files.
-Compose loads variables from:
-- `.env`
-- files passed via `--env-file`
+1. **Observe first.** Do not edit files until you can describe the symptom.
+2. **One change at a time.** Apply one fix, retest.
+3. **Prove it.** Use `/healthz` and `/readyz` and a DB query to confirm.
+4. **Document.** Every scenario requires runbook notes.
 
 ---
 
-## Files in this lab
-```text
-lab-10/
-├── README.md
-├── compose.yaml
-├── compose.override.yaml
-├── env/
-│   ├── dev.env
-│   └── prod.env
-├── db/
-│   └── init.sql
-├── api/
-│   ├── Dockerfile
-│   ├── .dockerignore
-│   ├── go.mod
-│   └── main.go
-├── hints.md
-├── instructor-notes.md
-├── validate.sh
-├── validate.ps1
-└── solutions/
-    └── solution.md
-```
+## Scenarios
 
----
+You will complete 4 independent scenarios. Each scenario lives in its own folder.
 
-## Step 1 — Base compose (shared)
+Run scenarios from their folder, e.g.:
 
-`compose.yaml` defines the **prod-like** shape:
-- built images only
-- no bind mounts
-- minimal config
-
----
-
-## Step 2 — Dev override
-
-`compose.override.yaml`:
-- adds bind mounts
-- enables faster iteration
-- automatically applied locally
-
----
-
-## Step 3 — Env files
-
-- `env/dev.env` → dev config
-- `env/prod.env` → prod-like config
-
-No secrets in compose files.
-
----
-
-## Tasks
-
-### Task 0 — Dev mode (default)
 ```bash
-docker compose --env-file env/dev.env up -d --build
+cd scenarios/scenario-01
+docker compose up -d --build
 docker compose ps
+docker compose logs -f --tail 50 api
 ```
 
-Change code in `api/main.go`, rebuild only API:
-```bash
-docker compose build api
-docker compose up -d --no-deps api
-```
+### What “done” means per scenario
 
-✅ Expected:
-- Changes visible after rebuild
-- Bind mounts present (dev convenience)
+- The stack starts
+- `/healthz` is OK
+- `/readyz` becomes ready
+- `GET /notes` works and returns JSON
+- You can insert a note and read it back
+- You bring it down with `docker compose down`
 
 ---
 
-### Task 1 — Prod-like mode
-```bash
-docker compose --env-file env/prod.env -f compose.yaml up -d --build
-docker compose ps
-```
+## Deliverable: RUNBOOK.md (required)
 
-Change code **without rebuilding**.
+Create `RUNBOOK.md` in `labs/lab-11/` with sections:
 
-✅ Expected:
-- No change visible
-- Confirms prod-like behavior
+- Scenario 1
+- Scenario 2
+- Scenario 3
+- Scenario 4
 
----
+For each:
 
-## Cleanup (STRICT)
-```bash
-docker compose down
-```
+- Symptoms observed
+- Commands run (and why)
+- Root cause
+- Fix applied
+- Prevention note
+
+A template exists at `RUNBOOK_TEMPLATE.md`.
 
 ---
 
 ## Validation
-```bash
-./scripts/validate/validate.sh lab-10
-# or
-.\scripts\validate\validate.ps1 lab-10
-```
+
+From repo root:
+
+- bash: `./scripts/validate/validate.sh lab-11`
+- PowerShell: `.\scripts/validatealidate.ps1 lab-11`
+
+Validation checks:
+
+- No lab-11 scenario containers exist
+- RUNBOOK.md exists and includes all scenario headings
 
 ---
 
-## Quick quiz
-1) Why does dev allow bind mounts but prod-like does not?
-2) Why are env files preferred over hardcoding values?
-3) What file does Compose auto-load locally?
+## Quick quiz (answer from memory)
+
+1. Why is “Up” not the same as “Ready”?
+2. What’s your first command when a system won’t start?
+3. Name 3 categories of failure in containerized systems.
+4. Why is “one change at a time” important in debugging?

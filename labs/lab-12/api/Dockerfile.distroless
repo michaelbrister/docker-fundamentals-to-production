@@ -1,0 +1,20 @@
+# Distroless (static) runtime: no shell, minimal surface area
+# ---- builder ----
+FROM golang:1.22-alpine AS builder
+WORKDIR /src
+RUN apk add --no-cache ca-certificates
+COPY go.mod ./
+RUN go mod download
+COPY . ./
+
+# Build a static binary (no libc dependency)
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /out/notes-api .
+
+# ---- runtime ----
+# Runs as non-root (UID 65532). No shell.
+FROM gcr.io/distroless/static-debian12:nonroot
+WORKDIR /app
+COPY --from=builder /out/notes-api /app/notes-api
+EXPOSE 8080
+ENV PORT=8080
+ENTRYPOINT ["/app/notes-api"]

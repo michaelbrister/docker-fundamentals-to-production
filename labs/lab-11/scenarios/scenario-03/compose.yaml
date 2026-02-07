@@ -1,4 +1,4 @@
-name: lab-11
+name: lab-11-s3
 
 services:
   db:
@@ -8,22 +8,24 @@ services:
       POSTGRES_PASSWORD: app
       POSTGRES_DB: appdb
     volumes:
-      - lab11_db_data:/var/lib/postgresql/data
+      - s3_db_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
       interval: 5s
       timeout: 3s
-      retries: 10
+      retries: 20
 
   api:
-    image: dzth/lab09-notes-api:0.1
+    build:
+      context: ./api
+    image: dzth/lab11-api:s3
     environment:
       PORT: "8080"
-      DB_HOST: "localhost"        # Scenario 2 bug
+      DB_HOST: "db"
       DB_PORT: "5432"
       DB_NAME: "appdb"
       DB_USER: "app"
-      DB_PASSWORD: "WRONG_PASS"   # Scenario 1 bug
+      DB_PASSWORD: "app"
     depends_on:
       db:
         condition: service_healthy
@@ -31,4 +33,4 @@ services:
       - "8080:8080"
 
 volumes:
-  lab11_db_data:
+  s3_db_data:

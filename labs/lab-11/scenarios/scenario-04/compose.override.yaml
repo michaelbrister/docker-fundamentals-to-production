@@ -1,0 +1,7 @@
+services:
+  api:
+    # Intentional dev override leak: bind mount + go run
+    volumes:
+      - ./api:/app
+    working_dir: /app
+    command: ["sh", "-lc", "go run ."]
