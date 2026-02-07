@@ -1,0 +1,15 @@
+services:
+  api:
+    # PROD-like: image-only. MUST NOT include 'build:'
+    # Use immutable image reference (local image ID like sha256:...)
+    image: "${PROMOTED_IMAGE_REF}"
+    ports:
+      - "8085:8080"
+
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

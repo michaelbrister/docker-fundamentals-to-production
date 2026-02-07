@@ -1,0 +1,9 @@
+services:
+  api:
+    # DEV: build the RC once (only build allowed in this lab)
+    build:
+      context: ./api
+      dockerfile: Dockerfile.distroless
+    image: "dzth/mini-platform-api:${RC_VERSION}"
+    ports:
+      - "8084:8080"

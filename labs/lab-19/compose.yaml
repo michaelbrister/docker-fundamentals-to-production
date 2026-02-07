@@ -1,0 +1,42 @@
+name: lab-19
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: lab19-db
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_DB: appdb
+      POSTGRES_PASSWORD: ""
+      POSTGRES_PASSWORD_FILE: "/run/secrets/db_password"
+    secrets:
+      - db_password
+    volumes:
+      - lab19_db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    container_name: lab19-api
+    env_file:
+      - ./.env
+    environment:
+      PORT: "8080"
+      DB_PASSWORD: ""
+      DB_PASSWORD_FILE: "/run/secrets/db_password"
+    secrets:
+      - db_password
+    depends_on:
+      db:
+        condition: service_healthy
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+volumes:
+  lab19_db_data:
