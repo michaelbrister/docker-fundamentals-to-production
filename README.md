@@ -1,27 +1,28 @@
-## v0.3 – Foundations → Production (stabilized + observability)
+## v0.5 – Production Readiness (supply chain + rollback)
 
-This release establishes the foundational structure for the course:
+This release extends the course from “can operate” to **production-ready DevOps discipline**:
 
-- Full repo layout
-- Lab scaffolding (01–15)
-- Validation and doctor scripts
-- Capstone structure
-- Naming and organizational conventions
-- Secrets & configuration lab (Lab 14)
-- Observability / logging / metrics lab (Lab 15)
+- Supply chain security (SBOMs + vulnerability policy)
+- Immutable artifacts and release provenance
+- Safe rollback discipline (no rebuilds under pressure)
+- Incident documentation and runbooks
+- Validation-first enforcement of release correctness
+
+Labs 19–20 complete the program by introducing artifact promotion discipline and a
+no-hints incident simulation, bringing the course to full production and on-call readiness.
 
 This release represents a **stable, end-to-end learning path** from Docker fundamentals
 through production-grade workflows, including debugging, security hardening, and CI
 policy enforcement. All labs included in this release validate cleanly via automated
 scripts on macOS, Linux, and CI runners.
 
-Content will be expanded in subsequent minor releases.
+Future releases may add optional extensions (Kubernetes, registries, signing/attestations), but the core 01–20 program is complete.
 
 # Docker Fundamentals → Production
 
 > A hands-on Docker training program: Zero → Production.
 
-**Last updated:** 2026-01-29
+**Last updated:** 2026-02-07
 
 This repository is a **complete, hands-on Docker training program** designed to take learners from
 **little/no container experience** to **production-grade Docker proficiency**.
@@ -76,6 +77,10 @@ Use this table to understand the progression of the course and how each lab buil
 |  14 | Secrets & Configuration     | Runtime secrets, config vs secrets        | 60–75 min  | Inject secrets safely at runtime       |
 |  15 | Observability               | Logs, metrics, health signals             | 75–90 min  | Diagnose systems with evidence         |
 |  16 | Capstone: Release Candidate | Image-only prod mode + runbook + incident | 90–120 min | Ship + operate with gates              |
+|  17 | Supply Chain Security       | SBOMs, vuln scanning, CI policy           | 60–90 min  | Trust and defend release artifacts     |
+|  18 | Release & Rollback          | Immutable tags, rollback discipline       | 60–90 min  | Recover safely without rebuilding      |
+|  19 | Promotion & Provenance      | Build once → promote many                 | 60–90 min  | Prevent rebuild drift across envs      |
+|  20 | Incident Day (Final Exam)   | Diagnosis, recovery, postmortem           | 90–120 min | Operate and recover under pressure     |
 
 ---
 
@@ -146,6 +151,11 @@ Operating Docker like a production system:
 - security hardening, secrets handling, and least privilege
 - image linting, scanning, and CI policy enforcement
 - local CI pipelines and quality gates
+- supply chain security (SBOMs, vulnerability policy)
+- immutable releases and rollback discipline
+- incident reporting and recovery workflows
+- promotion and provenance (build once → promote many)
+- incident response, recovery, and postmortems
 
 ---
 
@@ -189,5 +199,4 @@ A proficient learner can:
 
 - `COURSE_GUIDE.md`
 - `docs/glossary.md`
-- `capstone/requirements.md`
-- `capstone/rubric.md`
+- `docs/rubrics-and-evaluation.md`
