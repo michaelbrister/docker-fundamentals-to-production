@@ -1,0 +1,22 @@
+# Lab 15 API — distroless runtime (no shell)
+# ---- builder ----
+FROM golang:1.22-alpine AS builder
+WORKDIR /src
+RUN apk add --no-cache ca-certificates
+
+COPY go.mod ./
+COPY go.sum* ./
+RUN go mod download
+COPY . ./
+RUN go mod tidy
+RUN go mod download
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /out/notes-api .
+
+# ---- runtime ----
+FROM gcr.io/distroless/static-debian12:nonroot
+WORKDIR /app
+COPY --from=builder /out/notes-api /app/notes-api
+EXPOSE 8080
+ENV PORT=8080
+ENTRYPOINT ["/app/notes-api"]

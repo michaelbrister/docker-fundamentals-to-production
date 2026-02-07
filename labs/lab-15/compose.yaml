@@ -1,0 +1,59 @@
+name: lab-15
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: lab15-db
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ""
+      POSTGRES_PASSWORD_FILE: "/run/secrets/db_password"
+      POSTGRES_DB: appdb
+    secrets:
+      - db_password
+    volumes:
+      - lab15_db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "5437:5432"
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.distroless
+    image: dzth/lab15-notes-api:distroless-0.1
+    container_name: lab15-api
+    env_file:
+      - ./.env
+    environment:
+      PORT: "8080"
+      DB_PASSWORD: ""
+      DB_PASSWORD_FILE: "/run/secrets/db_password"
+    secrets:
+      - db_password
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+
+    # Runtime hardening (continuity with Lab 12)
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+volumes:
+  lab15_db_data:
