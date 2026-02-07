@@ -1,0 +1,17 @@
+FROM golang:1.22-alpine AS builder
+WORKDIR /src
+
+# Copy module + source, then resolve deps with tidy
+COPY . ./
+
+# This generates go.sum based on imports, then downloads deps
+RUN go mod tidy && go mod download
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /out/mini-platform-api .
+
+FROM gcr.io/distroless/static-debian12:nonroot
+WORKDIR /app
+COPY --from=builder /out/mini-platform-api /app/mini-platform-api
+EXPOSE 8080
+ENV PORT=8080
+ENTRYPOINT ["/app/mini-platform-api"]

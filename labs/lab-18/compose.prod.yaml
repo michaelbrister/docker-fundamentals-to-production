@@ -1,0 +1,12 @@
+services:
+  api:
+    image: "dzth/mini-platform-api:${ACTIVE_VERSION}"
+    ports:
+      - "8083:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
