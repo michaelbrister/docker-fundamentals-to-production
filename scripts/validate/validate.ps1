@@ -58,8 +58,15 @@ function Invoke-OneLab {
     }
 
     Write-Host "Dispatching to lab validator: $validator" -ForegroundColor Cyan
-    & $validator
-    return $LASTEXITCODE
+
+    Push-Location $labDir
+    try {
+        & (Join-Path (Get-Location) "validate.ps1")
+        return $LASTEXITCODE
+    }
+    finally {
+        Pop-Location
+    }
 }
 
 if ($Lab -eq "all") {

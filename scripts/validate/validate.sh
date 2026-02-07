@@ -52,10 +52,12 @@ run_one() {
   fi
 
   echo "Running validator: ${validator}"
-  (
+  if ! (
     cd "${lab_dir}"
     bash "./validate.sh"
-  )
+  ); then
+    return 1
+  fi
   echo "✅ Validation passed for: ${lab_dir}"
 }
 

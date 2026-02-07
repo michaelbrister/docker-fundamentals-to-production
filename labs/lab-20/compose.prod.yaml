@@ -1,0 +1,13 @@
+services:
+  api:
+    # Image-only prod-like mode (no build)
+    image: "${PROMOTED_IMAGE_REF}"
+    ports:
+      - "8086:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
