@@ -1,0 +1,15 @@
+services:
+  # Prod-like mode must run from a versioned image tag (no build context allowed)
+  api:
+    image: "dzth/mini-platform-api:${RELEASE_VERSION}"
+    ports:
+      - "8082:8080"
+
+    # Runtime hardening (must pass validator)
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
