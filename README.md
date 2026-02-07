@@ -1,4 +1,4 @@
-## v0.2 – Foundations → Production (stabilized + secrets)
+## v0.3 – Foundations → Production (stabilized + observability)
 
 This release establishes the foundational structure for the course:
 
@@ -8,6 +8,7 @@ This release establishes the foundational structure for the course:
 - Capstone structure
 - Naming and organizational conventions
 - Secrets & configuration lab (Lab 14)
+- Observability / logging / metrics lab (Lab 15)
 
 This release represents a **stable, end-to-end learning path** from Docker fundamentals
 through production-grade workflows, including debugging, security hardening, and CI
@@ -57,22 +58,24 @@ The program emphasizes:
 
 Use this table to understand the progression of the course and how each lab builds toward production readiness.
 
-| Lab | Title                   | Primary Focus                      | Est. Time | Outcome                                |
-| --: | ----------------------- | ---------------------------------- | --------- | -------------------------------------- |
-|  01 | Getting Started         | Docker CLI, images vs containers   | 30–45 min | Run and inspect containers confidently |
-|  02 | Container Lifecycle     | Start/stop, logs, exec, cleanup    | 30–45 min | Control running containers safely      |
-|  03 | Images & Tags           | Registries, pulling, tagging       | 45 min    | Reason about image provenance          |
-|  04 | Dockerfiles             | Custom image builds                | 45–60 min | Build reproducible images              |
-|  05 | Volumes & State         | Persistence fundamentals           | 45–60 min | Preserve and reason about state        |
-|  06 | Production Images       | Multi-stage builds, non-root       | 60 min    | Produce secure runtime images          |
-|  07 | Health & Readiness      | Healthchecks, dependencies         | 45–60 min | Distinguish running vs usable          |
-|  08 | App + DB System         | Multi-service Compose wiring       | 60–75 min | Operate a real local platform          |
-|  09 | Build Artifacts         | Compose builds images              | 60–75 min | Ship images, not source code           |
-|  10 | Dev vs Prod             | Overrides, env files               | 60 min    | Run the same system in multiple envs   |
-|  11 | Debugging & Break/Fix   | Failure diagnosis                  | 75–90 min | Debug systems methodically             |
-|  12 | Security Hardening      | Distroless, RO FS, least privilege | 60–75 min | Harden container runtimes              |
-|  13 | CI & Policy (optional)  | Build, scan, enforce               | 60–90 min | Integrate Docker into CI safely        |
-|  14 | Secrets & Configuration | Runtime secrets, config vs secrets | 60–75 min | Inject secrets safely at runtime       |
+| Lab | Title                       | Primary Focus                             | Est. Time  | Outcome                                |
+| --: | --------------------------- | ----------------------------------------- | ---------- | -------------------------------------- |
+|  01 | Getting Started             | Docker CLI, images vs containers          | 30–45 min  | Run and inspect containers confidently |
+|  02 | Container Lifecycle         | Start/stop, logs, exec, cleanup           | 30–45 min  | Control running containers safely      |
+|  03 | Images & Tags               | Registries, pulling, tagging              | 45 min     | Reason about image provenance          |
+|  04 | Dockerfiles                 | Custom image builds                       | 45–60 min  | Build reproducible images              |
+|  05 | Volumes & State             | Persistence fundamentals                  | 45–60 min  | Preserve and reason about state        |
+|  06 | Production Images           | Multi-stage builds, non-root              | 60 min     | Produce secure runtime images          |
+|  07 | Health & Readiness          | Healthchecks, dependencies                | 45–60 min  | Distinguish running vs usable          |
+|  08 | App + DB System             | Multi-service Compose wiring              | 60–75 min  | Operate a real local platform          |
+|  09 | Build Artifacts             | Compose builds images                     | 60–75 min  | Ship images, not source code           |
+|  10 | Dev vs Prod                 | Overrides, env files                      | 60 min     | Run the same system in multiple envs   |
+|  11 | Debugging & Break/Fix       | Failure diagnosis                         | 75–90 min  | Debug systems methodically             |
+|  12 | Security Hardening          | Distroless, RO FS, least privilege        | 60–75 min  | Harden container runtimes              |
+|  13 | CI & Policy (optional)      | Build, scan, enforce                      | 60–90 min  | Integrate Docker into CI safely        |
+|  14 | Secrets & Configuration     | Runtime secrets, config vs secrets        | 60–75 min  | Inject secrets safely at runtime       |
+|  15 | Observability               | Logs, metrics, health signals             | 75–90 min  | Diagnose systems with evidence         |
+|  16 | Capstone: Release Candidate | Image-only prod mode + runbook + incident | 90–120 min | Ship + operate with gates              |
 
 ---
 
