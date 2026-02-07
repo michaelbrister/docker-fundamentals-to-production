@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  policy-lint:
+    name: Policy & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make policy script executable
+        run: chmod +x scripts/ci/policy-check.sh
+
+      - name: Docker policy checks
+        run: scripts/ci/policy-check.sh
+
+      - name: Hadolint (Dockerfile lint)
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: |
+            labs/lab-12/api/Dockerfile
+            labs/lab-12/api/Dockerfile.distroless
+          failure-threshold: error
+
+  build-scan-smoke:
+    name: Build → Scan → Smoke test
+    runs-on: ubuntu-latest
+    needs: [policy-lint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Lab 12 distroless API image
+        run: |
+          docker build             -f labs/lab-12/api/Dockerfile.distroless             -t dzth/lab12-notes-api:ci             labs/lab-12/api
+
+      - name: Trivy scan (fail on CRITICAL only)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: dzth/lab12-notes-api:ci
+          format: table
+          exit-code: '1'
+          severity: CRITICAL
+          ignore-unfixed: true
+
+      - name: Smoke test (Lab 12 hardened compose)
+        run: |
+          cd labs/lab-12
+          docker compose -f compose.distroless.yaml up -d --build
+          echo "Waiting for readiness..."
+          for i in {1..40}; do
+            if curl -fsS http://localhost:8080/readyz >/dev/null 2>&1; then
+              echo "ready ✔"
+              break
+            fi
+            sleep 2
+          done
+          curl -fsS http://localhost:8080/healthz
+          curl -fsS http://localhost:8080/readyz
+          curl -fsS http://localhost:8080/notes
+          docker compose -f compose.distroless.yaml logs api --tail 120
+          docker compose -f compose.distroless.yaml down
