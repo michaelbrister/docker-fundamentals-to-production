@@ -1,4 +1,4 @@
-## v0.1 – Initial course scaffold
+## v0.2 – Foundations → Production (stabilized + secrets)
 
 This release establishes the foundational structure for the course:
 
@@ -7,6 +7,12 @@ This release establishes the foundational structure for the course:
 - Validation and doctor scripts
 - Capstone structure
 - Naming and organizational conventions
+- Secrets & configuration lab (Lab 14)
+
+This release represents a **stable, end-to-end learning path** from Docker fundamentals
+through production-grade workflows, including debugging, security hardening, and CI
+policy enforcement. All labs included in this release validate cleanly via automated
+scripts on macOS, Linux, and CI runners.
 
 Content will be expanded in subsequent minor releases.
 
@@ -51,21 +57,59 @@ The program emphasizes:
 
 Use this table to understand the progression of the course and how each lab builds toward production readiness.
 
-| Lab | Title                  | Primary Focus                      | Est. Time | Outcome                                |
-| --: | ---------------------- | ---------------------------------- | --------- | -------------------------------------- |
-|  01 | Getting Started        | Docker CLI, images vs containers   | 30–45 min | Run and inspect containers confidently |
-|  02 | Container Lifecycle    | Start/stop, logs, exec, cleanup    | 30–45 min | Control running containers safely      |
-|  03 | Images & Tags          | Registries, pulling, tagging       | 45 min    | Reason about image provenance          |
-|  04 | Dockerfiles            | Custom image builds                | 45–60 min | Build reproducible images              |
-|  05 | Volumes & State        | Persistence fundamentals           | 45–60 min | Preserve and reason about state        |
-|  06 | Production Images      | Multi-stage builds, non-root       | 60 min    | Produce secure runtime images          |
-|  07 | Health & Readiness     | Healthchecks, dependencies         | 45–60 min | Distinguish running vs usable          |
-|  08 | App + DB System        | Multi-service Compose wiring       | 60–75 min | Operate a real local platform          |
-|  09 | Build Artifacts        | Compose builds images              | 60–75 min | Ship images, not source code           |
-|  10 | Dev vs Prod            | Overrides, env files               | 60 min    | Run the same system in multiple envs   |
-|  11 | Debugging & Break/Fix  | Failure diagnosis                  | 75–90 min | Debug systems methodically             |
-|  12 | Security Hardening     | Distroless, RO FS, least privilege | 60–75 min | Harden container runtimes              |
-|  13 | CI & Policy (optional) | Build, scan, enforce               | 60–90 min | Integrate Docker into CI safely        |
+| Lab | Title                   | Primary Focus                      | Est. Time | Outcome                                |
+| --: | ----------------------- | ---------------------------------- | --------- | -------------------------------------- |
+|  01 | Getting Started         | Docker CLI, images vs containers   | 30–45 min | Run and inspect containers confidently |
+|  02 | Container Lifecycle     | Start/stop, logs, exec, cleanup    | 30–45 min | Control running containers safely      |
+|  03 | Images & Tags           | Registries, pulling, tagging       | 45 min    | Reason about image provenance          |
+|  04 | Dockerfiles             | Custom image builds                | 45–60 min | Build reproducible images              |
+|  05 | Volumes & State         | Persistence fundamentals           | 45–60 min | Preserve and reason about state        |
+|  06 | Production Images       | Multi-stage builds, non-root       | 60 min    | Produce secure runtime images          |
+|  07 | Health & Readiness      | Healthchecks, dependencies         | 45–60 min | Distinguish running vs usable          |
+|  08 | App + DB System         | Multi-service Compose wiring       | 60–75 min | Operate a real local platform          |
+|  09 | Build Artifacts         | Compose builds images              | 60–75 min | Ship images, not source code           |
+|  10 | Dev vs Prod             | Overrides, env files               | 60 min    | Run the same system in multiple envs   |
+|  11 | Debugging & Break/Fix   | Failure diagnosis                  | 75–90 min | Debug systems methodically             |
+|  12 | Security Hardening      | Distroless, RO FS, least privilege | 60–75 min | Harden container runtimes              |
+|  13 | CI & Policy (optional)  | Build, scan, enforce               | 60–90 min | Integrate Docker into CI safely        |
+|  14 | Secrets & Configuration | Runtime secrets, config vs secrets | 60–75 min | Inject secrets safely at runtime       |
+
+---
+
+## Validation & CI philosophy
+
+This course is **validation-first**.
+
+Every lab includes its own validator, and the repository provides top-level runners to
+validate a single lab or the entire course:
+
+```bash
+./scripts/validate/validate.sh        # validate all labs
+./scripts/validate/validate.sh lab-08 # validate a single lab
+```
+
+On Windows:
+
+```powershell
+.\scripts\validate\validate.ps1
+```
+
+Validation enforces:
+
+- required learner artifacts (files you must create)
+- correct runtime behavior (services up, endpoints responding)
+- strict cleanup (no leftover containers)
+
+### CI enforcement (Lab 13)
+
+Starting in **Lab 13** (and expanded in Lab 14), these standards are enforced automatically via GitHub Actions:
+
+- Dockerfile policy (no `:latest`, non-root runtime)
+- Image build reproducibility
+- Vulnerability scanning (fail on **CRITICAL** only)
+- Smoke tests to prove the system boots correctly
+
+If CI fails, the change is not considered complete.
 
 ## How the program is structured
 
@@ -88,6 +132,7 @@ Hands-on image builds and service design:
 - health checks and dependency wiring
 - environment configuration and secrets
 - Docker Compose platforms and profiles
+- secrets and runtime configuration using Docker Compose
 
 ### Track C — Operations, Security, and CI
 
@@ -95,8 +140,8 @@ Operating Docker like a production system:
 
 - debugging and break/fix scenarios
 - logging, metrics, and observability
-- security hardening and least privilege
-- image scanning, linting, and SBOMs
+- security hardening, secrets handling, and least privilege
+- image linting, scanning, and CI policy enforcement
 - local CI pipelines and quality gates
 
 ---
@@ -119,7 +164,7 @@ docker compose version
 3. Start with Lab 01:
 
 ```text
-labs/lab-01-getting-started
+labs/lab-01
 ```
 
 ---

@@ -27,11 +27,15 @@ run_one() {
   local input="$1"
   local lab_dir validator
 
+  # Sanitize input (handle leading "./" and possible CRLF)
+  input="${input//$'\r'/}"
+  input="${input#./}"
+
   # Normalize input into a lab directory under ./labs
   case "${input}" in
-    labs/*) lab_dir="${input}" ;;
-    lab-*)  lab_dir="labs/${input}" ;;
-    *)      lab_dir="labs/${input}" ;;
+    labs/*)   lab_dir="${input}" ;;
+    lab-*)    lab_dir="labs/${input}" ;;
+    *)        lab_dir="labs/${input}" ;;
   esac
 
   if [[ ! -d "${lab_dir}" ]]; then
@@ -48,22 +52,25 @@ run_one() {
   fi
 
   echo "Running validator: ${validator}"
-  bash "${validator}"
+  (
+    cd "${lab_dir}"
+    bash "./validate.sh"
+  )
   echo "✅ Validation passed for: ${lab_dir}"
 }
 
 if [[ "${lab_input}" == "all" ]]; then
   # Validate every lab folder that has a validate.sh
-  mapfile -t labs_to_run < <(find ./labs -maxdepth 1 -type d -name "lab-*" -print | sort)
+  labs_to_run=$(find ./labs -maxdepth 1 -type d -name "lab-*" | sort)
 
-  if [[ ${#labs_to_run[@]} -eq 0 ]]; then
+  if [[ -z "${labs_to_run}" ]]; then
     echo "ERROR: No labs found under ./labs (expected directories like labs/lab-01)" >&2
     exit 2
   fi
 
   failures=0
   echo "Validating all labs..."
-  for d in "${labs_to_run[@]}"; do
+  while IFS= read -r d; do
     if [[ -f "${d}/validate.sh" ]]; then
       echo ""
       echo "=== ${d} ==="
@@ -76,7 +83,7 @@ if [[ "${lab_input}" == "all" ]]; then
       echo "=== ${d} ==="
       echo "SKIP: No validate.sh in ${d}"
     fi
-  done
+  done <<< "${labs_to_run}"
 
   echo ""
   if [[ ${failures} -ne 0 ]]; then

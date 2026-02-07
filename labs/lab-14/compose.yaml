@@ -1,0 +1,52 @@
+name: lab-14
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: lab14-db
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: appdb
+    volumes:
+      - lab14_db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "5436:5432"
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.distroless
+    image: dzth/lab14-notes-api:distroless-0.1
+    container_name: lab14-api
+    env_file:
+      - ./.env
+    environment:
+      PORT: "8080"
+      # Secrets intentionally NOT provided here.
+      # With only compose.yaml, the API should fail and teach you that secrets are required.
+      DB_PASSWORD: ""
+      DB_PASSWORD_FILE: ""
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+    # keep runtime hardened (continuity with Lab 12)
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  lab14_db_data:
